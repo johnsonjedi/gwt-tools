@@ -1,0 +1,72 @@
+<#assign licenseFirst = "/*">
+<#assign licensePrefix = " * ">
+<#assign licenseLast = " */">
+<#include "${project.licensePath}">
+
+<#if package?? && package != "">
+package ${package};
+
+</#if>
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+
+/**
+ *
+ * @author ${user}
+ */
+public class ${name} extends GwtEvent<${name}.${name}Handler> {
+
+    private static final Type<${name}Handler> TYPE =
+            new Type<${name}Handler>(); 
+
+    public enum Action {
+        <#list actions as item>
+        /** ${item.comment} */
+        ${item.name}<#sep>,
+        </#sep>
+        </#list>
+
+    }
+    
+    private final Action action;
+    
+    public ${name}(Action action) {
+        this.action = action;
+    }
+
+    @Override
+    public Type<${name}Handler> getAssociatedType() {
+        return TYPE;
+    }
+    
+    @Override
+    protected void dispatch(${name}Handler handler) {
+        <#list actions as item>
+        <#if item?index == 0>
+        if (action == Action.${item.name}) {
+        <#else>
+        } else if (action == Action.${item.name}) {
+        </#if>
+            handler.on<#list item.name?split("_") as m>${m?lower_case?cap_first}</#list>(this);
+        <#if item?is_last>
+        }
+        </#if>
+        </#list>
+    }
+    
+    
+    public interface ${name}Handler extends EventHandler {
+
+        <#list actions as item>
+        /**
+         * fire if action equals {@code Action.${item.name}}
+         *
+         * @param event
+         * @see ${name}.Action
+         */
+        void on<#list item.name?split("_") as m>${m?lower_case?cap_first}</#list>(${name} event);
+
+        </#list>
+    }
+    
+}
