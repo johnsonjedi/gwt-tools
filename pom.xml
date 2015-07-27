@@ -9,13 +9,21 @@
     
     <name>GWT Tools</name>
 
-    <url>https://github.com/johnsonjedi/gwt-tools.git</url>
+    <url>https://github.com/johnsonjedi/gwt-tools</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/johnsonjedi/gwt-tools.git</connection>
+    </scm>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+
     <build>
+        <defaultGoal>clean install</defaultGoal>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -28,8 +36,45 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build>${git.commit.id}_${git.build.time}</Implementation-Build>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.1.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                         </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <dateFormat>yyyyMMddHHmmss</dateFormat>
+                </configuration>
+            </plugin>
+            
         </plugins>
     </build>
+    
+    
     <dependencies>
         <dependency>
             <groupId>org.freemarker</groupId>
@@ -37,4 +82,5 @@
             <version>2.3.23</version>
         </dependency>
     </dependencies>
+
 </project>
