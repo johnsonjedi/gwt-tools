@@ -22,9 +22,9 @@ import java.lang.annotation.Target;
 
 /**
  *
- * @author johnson
+ * @author johnson.hsu
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.PACKAGE)
 @Retention(RetentionPolicy.CLASS)
 public @interface EventAction {
     

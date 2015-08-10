@@ -6,7 +6,7 @@
  * You may obtain a copy of the License at 
  * 
  * http://www.gnu.org/licenses/lgpl-3.0.txt 
- * 
+ *  
  * Unless required by applicable law or agreed to in writing, software 
  * distributed under the License is distributed on an "AS IS" BASIS, 
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -26,18 +26,12 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.PACKAGE)
 @Retention(RetentionPolicy.CLASS)
-public @interface GwtEventRegistration {
-    
+public @interface GwtEventRegistrations {
+
     /** 
      * (Required) 
-     * Name of GWT Event. 
+     * An array of <code>GwtEventRegistration</code> annotations. 
      */
-    String name();
-    
-    /** 
-     * (Required) 
-     * An array of <code>EventAction</code> annotations. 
-     */
-    EventAction [] actions();
+    GwtEventRegistration[] value();
     
 }
