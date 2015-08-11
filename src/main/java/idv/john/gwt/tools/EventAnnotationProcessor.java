@@ -22,6 +22,8 @@ import freemarker.template.TemplateException;
 import idv.john.gwt.tools.annotation.EventAction;
 import idv.john.gwt.tools.annotation.GwtEventRegistration;
 import idv.john.gwt.tools.annotation.GwtEventRegistrations;
+import idv.john.gwt.tools.annotation.GwtWebSocketRegistration;
+import idv.john.gwt.tools.annotation.GwtWebSocketRegistrations;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,25 +49,38 @@ import javax.lang.model.element.TypeElement;
  */
 @SupportedAnnotationTypes({
     "idv.john.gwt.tools.annotation.GwtEventRegistration", 
-    "idv.john.gwt.tools.annotation.GwtEventRegistrations"
+    "idv.john.gwt.tools.annotation.GwtEventRegistrations",
+    "idv.john.gwt.tools.annotation.GwtWebSocketRegistration", 
+    "idv.john.gwt.tools.annotation.GwtWebSocketRegistrations"
 })
 public class EventAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (!roundEnv.getElementsAnnotatedWith(GwtEventRegistrations.class).isEmpty()) {
-            for (Element e : roundEnv.getElementsAnnotatedWith(GwtEventRegistrations.class)) {
-                GwtEventRegistrations regs = e.getAnnotation(GwtEventRegistrations.class);
-                for (GwtEventRegistration reg : regs.value()) {
-                    processGwtEventRegistration(e, reg);
-                }
-            }
-        } else if (!roundEnv.getElementsAnnotatedWith(GwtEventRegistration.class).isEmpty()) {
-            for (Element e : roundEnv.getElementsAnnotatedWith(GwtEventRegistration.class)) {
-                GwtEventRegistration reg = e.getAnnotation(GwtEventRegistration.class);
+        for (Element e : roundEnv.getElementsAnnotatedWith(GwtEventRegistrations.class)) {
+            GwtEventRegistrations regs = e.getAnnotation(GwtEventRegistrations.class);
+            for (GwtEventRegistration reg : regs.value()) {
                 processGwtEventRegistration(e, reg);
             }
         }
+        
+        for (Element e : roundEnv.getElementsAnnotatedWith(GwtEventRegistration.class)) {
+            GwtEventRegistration reg = e.getAnnotation(GwtEventRegistration.class);
+            processGwtEventRegistration(e, reg);
+        }
+        
+        for (Element e : roundEnv.getElementsAnnotatedWith(GwtWebSocketRegistrations.class)) {
+            GwtWebSocketRegistrations regs = e.getAnnotation(GwtWebSocketRegistrations.class);
+            for (GwtWebSocketRegistration reg : regs.value()) {
+                processGwtWebSocketRegistration(e, reg);
+            }
+        }
+
+        for (Element e : roundEnv.getElementsAnnotatedWith(GwtWebSocketRegistration.class)) {
+            GwtWebSocketRegistration reg = e.getAnnotation(GwtWebSocketRegistration.class);
+            processGwtWebSocketRegistration(e, reg);
+        }
+
         return true;
     }
 
@@ -123,6 +138,46 @@ public class EventAnnotationProcessor extends AbstractProcessor {
             }
             root.put("actions", actions);
 
+            temp.process(root, writer);
+        } catch (IOException | TemplateException ex) {
+            Logger.getLogger(EventAnnotationProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void processGwtWebSocketRegistration(Element e, GwtWebSocketRegistration reg) {
+        System.out.println("Processing " + e.toString());
+        
+        String packageName = getPackage(e);
+        if (e.getKind() == ElementKind.PACKAGE) {
+            packageName = e.toString();
+        }
+        File eventDir = getEventDir(packageName);
+
+        File eventFile = new File(eventDir.getAbsolutePath() + File.separator + 
+                reg.name() + ".java");
+        try {
+            if (!eventFile.exists()) {
+                eventFile.createNewFile();
+            }
+            
+            Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
+            cfg.setDefaultEncoding("UTF-8");
+            ClassTemplateLoader ctl = new ClassTemplateLoader(EventAnnotationProcessor.class, "template");
+            cfg.setTemplateLoader(ctl);
+            Template temp = cfg.getTemplate("WebSocket.java.template");
+            Writer writer = new OutputStreamWriter(new FileOutputStream(eventFile));
+
+            Map root = new HashMap();
+            Map project = new HashMap();
+            root.put("project", project);
+            project.put("licensePath", "");
+            root.put("package", packageName);
+            root.put("user", "johnson");
+            root.put("name", reg.name());
+            
+            root.put("websocketName", reg.name());
+            root.put("uri", reg.uri());
+            
             temp.process(root, writer);
         } catch (IOException | TemplateException ex) {
             Logger.getLogger(EventAnnotationProcessor.class.getName()).log(Level.SEVERE, null, ex);

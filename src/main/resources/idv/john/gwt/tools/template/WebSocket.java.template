@@ -1,0 +1,62 @@
+<#assign licenseFirst = "/*">
+<#assign licensePrefix = " * ">
+<#assign licenseLast = " */">
+<#include "${project.licensePath}">
+
+<#if package?? && package != "">
+package ${package};
+
+</#if>
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window.Location;
+import idv.john.gwt.tools.websocket.GwtWebSocketHandler;
+
+/**
+ *
+ * @author ${user}
+ */
+public class ${name} {
+
+    private String uri;
+
+    private GwtWebSocketHandler handler;
+
+    public ${name}(GwtWebSocketHandler handler) {
+        this.handler = handler;
+        this.uri = GWT.getHostPageBaseURL().replace(Location.getProtocol(), "ws:") + "${uri}";
+    }
+
+    public native void send(String message) /*-{
+        $wnd.${websocketName}.send(message);
+    }-*/;
+    
+    /**
+     * http://www.w3.org/TR/2011/WD-websockets-20110419/
+     * 
+     * CONNECTING (numeric value 0) The connection has not yet been established.
+     * OPEN (numeric value 1) The WebSocket connection is established and communication is possible.
+     * CLOSING (numeric value 2) The connection is going through the closing handshake.
+     * CLOSED (numeric value 3) The connection has been closed or could not be opened.
+     * 
+     * @return
+     */
+    public native boolean isClosed() /*-{
+        return $wnd.${websocketName}.readyState == 3;
+    }-*/;
+    
+    public native void open() /*-{
+        var websocket = new $wnd.WebSocket(this.@${package}.${name}::uri);
+        var handler = this.@${package}.${name}::handler;
+        websocket.onopen = function() {
+            handler.@idv.john.gwt.tools.websocket.GwtWebSocketHandler::onOpen()();
+        }
+        websocket.onmessage = function(event) {
+            handler.@idv.john.gwt.tools.websocket.GwtWebSocketHandler::onMessage(Ljava/lang/String;)(event.data);
+        }
+        websocket.onclose = function() {
+            handler.@idv.john.gwt.tools.websocket.GwtWebSocketHandler::onClose(ILjava/lang/String;)(event.code, event.reason);
+        }
+        $wnd.${websocketName} = websocket;
+    }-*/;
+
+}
