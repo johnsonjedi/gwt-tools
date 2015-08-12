@@ -172,7 +172,7 @@ public class EventAnnotationProcessor extends AbstractProcessor {
             root.put("project", project);
             project.put("licensePath", "");
             root.put("package", packageName);
-            root.put("user", "johnson");
+            root.put("user", "johnson.hsu");
             root.put("name", reg.name());
             
             root.put("websocketName", reg.name());
