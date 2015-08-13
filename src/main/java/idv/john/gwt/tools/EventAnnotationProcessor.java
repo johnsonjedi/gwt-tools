@@ -124,9 +124,9 @@ public class EventAnnotationProcessor extends AbstractProcessor {
             Map root = new HashMap();
             Map project = new HashMap();
             root.put("project", project);
-            project.put("licensePath", "");
+            project.put("licensePath", "License.template");
             root.put("package", packageName);
-            root.put("user", "johnson");
+            root.put("user", "johnson.hsu");
             root.put("name", reg.name());
 
             List actions = new ArrayList();
@@ -170,7 +170,7 @@ public class EventAnnotationProcessor extends AbstractProcessor {
             Map root = new HashMap();
             Map project = new HashMap();
             root.put("project", project);
-            project.put("licensePath", "");
+            project.put("licensePath", "License.template");
             root.put("package", packageName);
             root.put("user", "johnson.hsu");
             root.put("name", reg.name());
@@ -183,5 +183,5 @@ public class EventAnnotationProcessor extends AbstractProcessor {
             Logger.getLogger(EventAnnotationProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }
