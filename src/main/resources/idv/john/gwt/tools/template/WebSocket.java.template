@@ -20,7 +20,6 @@ package ${package};
 </#if>
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window.Location;
-import idv.john.gwt.tools.websocket.GwtWebSocketHandler;
 
 /**
  *
@@ -30,9 +29,9 @@ public class ${name} {
 
     private String uri;
 
-    private GwtWebSocketHandler handler;
+    private ${name}.WebSocketHandler handler;
 
-    public ${name}(GwtWebSocketHandler handler) {
+    public ${name}(${name}.WebSocketHandler handler) {
         this.handler = handler;
         this.uri = GWT.getHostPageBaseURL().replace(Location.getProtocol(), "ws:") + "${uri}";
     }
@@ -59,15 +58,25 @@ public class ${name} {
         var websocket = new $wnd.WebSocket(this.@${package}.${name}::uri);
         var handler = this.@${package}.${name}::handler;
         websocket.onopen = function() {
-            handler.@idv.john.gwt.tools.websocket.GwtWebSocketHandler::onOpen()();
+            handler.@${package}.${name}.WebSocketHandler::onOpen()();
         }
         websocket.onmessage = function(event) {
-            handler.@idv.john.gwt.tools.websocket.GwtWebSocketHandler::onMessage(Ljava/lang/String;)(event.data);
+            handler.@${package}.${name}.WebSocketHandler::onMessage(Ljava/lang/String;)(event.data);
         }
         websocket.onclose = function() {
-            handler.@idv.john.gwt.tools.websocket.GwtWebSocketHandler::onClose(ILjava/lang/String;)(event.code, event.reason);
+            handler.@${package}.${name}.WebSocketHandler::onClose(ILjava/lang/String;)(event.code, event.reason);
         }
         $wnd.${websocketName} = websocket;
     }-*/;
+
+    interface WebSocketHandler {
+    
+        void onOpen();
+
+        void onMessage(String message);
+
+        void onClose(int code, String reason);
+
+    }
 
 }
