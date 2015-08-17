@@ -40,6 +40,10 @@ public class ${name} {
         $wnd.${websocketName}.send(message);
     }-*/;
     
+    public native void close() /*-{
+        $wnd.${websocketName}.close();
+    }-*/;
+    
     /**
      * http://www.w3.org/TR/2011/WD-websockets-20110419/
      * 
@@ -63,13 +67,13 @@ public class ${name} {
         websocket.onmessage = function(event) {
             handler.@${package}.${name}.WebSocketHandler::onMessage(Ljava/lang/String;)(event.data);
         }
-        websocket.onclose = function() {
+        websocket.onclose = function(event) {
             handler.@${package}.${name}.WebSocketHandler::onClose(ILjava/lang/String;)(event.code, event.reason);
         }
         $wnd.${websocketName} = websocket;
     }-*/;
 
-    interface WebSocketHandler {
+    public interface WebSocketHandler {
     
         void onOpen();
 
