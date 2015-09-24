@@ -27,7 +27,7 @@ import com.google.gwt.event.shared.GwtEvent;
  */
 public class ${name} extends GwtEvent<${name}.${name}Handler> {
 
-    private static final Type<${name}Handler> TYPE =
+    public static final Type<${name}Handler> TYPE =
             new Type<${name}Handler>(); 
 
     public enum Action {
